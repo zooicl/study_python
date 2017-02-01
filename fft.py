@@ -2,10 +2,6 @@
 # -*- coding: cp949 -*-
 """
 FFT Test code in python
-
-Withrobot Lab.
-http://withrobot.com
-2008.4.28
 """
 
 from pylab import *
