@@ -1,2 +1,2 @@
-# study_python
+# Study_python
 study_python
