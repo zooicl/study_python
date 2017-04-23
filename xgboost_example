@@ -1,0 +1,61 @@
+# First XGBoost model for Pima Indians dataset
+from numpy import loadtxt
+from xgboost import XGBClassifier
+from xgboost import DMatrix
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# load data
+dataset = loadtxt('pima-indians-diabetes.csv', delimiter=",")
+# split data into X and y
+X = dataset[:, 0:8]
+Y = dataset[:, 8]
+
+# split data into train and test sets
+seed = 7
+test_size = 0.33
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=test_size, random_state=seed)
+
+# fit model no training data
+model = XGBClassifier()
+model.fit(X_train, y_train)
+
+# make predictions for test data
+y_pred = model.predict(X_test)
+test_dmatrix = DMatrix(X_test)
+y_pred_pro = model.booster().predict(test_dmatrix)
+print(y_pred)
+print(y_pred_pro)
+predictions = [round(value) for value in y_pred]
+
+# evaluate predictions
+accuracy = accuracy_score(y_test, predictions)
+print("Accuracy: %.2f%%" % (accuracy * 100.0))
+
+from sklearn import metrics
+
+fpr, tpr, thresholds = metrics.roc_curve(y_test, y_pred_pro)
+roc_auc = metrics.auc(fpr, tpr)
+
+print('fpr', fpr)
+print('tpr', tpr)
+print('auc', roc_auc)
+
+import matplotlib.pyplot as plt
+
+plt.title('Receiver Operating Characteristic')
+plt.plot(fpr, tpr, 'b', label='AUC = %0.2f' % roc_auc)
+plt.legend(loc='lower right')
+plt.plot([0, 1], [0, 1], 'r--')
+plt.xlim([0, 1.0])
+plt.ylim([0, 1.0])
+plt.ylabel('True Positive Rate')
+plt.xlabel('False Positive Rate')
+plt.show()
+
+# from sklearn.metrics import precision_recall_curve
+#
+# precision, recall, thresholds = precision_recall_curve(y_test, y_pred_pro)
+# print(precision)
+# print(recall)
+# print(thresholds)
